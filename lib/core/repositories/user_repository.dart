@@ -108,7 +108,7 @@ class AppUser {
       uid: doc.id,
       role: (data['role'] as String?) ?? 'student',
       full_name: (data['full_name'] as String?) ?? 'Unknown',
-      university_id: (data['university_id'] as String?) ?? (data['lecturer_id'] as String?) ?? '',
+      university_id: (data['university_id'] as String?) ?? '',
       email: (data['email'] as String?) ?? '',
       metadata: (data['metadata'] as Map<String, dynamic>?) ?? {},
       registeredSubjects: parsedSubjects,

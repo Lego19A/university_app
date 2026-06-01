@@ -44,7 +44,7 @@ class LecturerQrScreen extends ConsumerStatefulWidget {
 
 class _LecturerQrScreenState extends ConsumerState<LecturerQrScreen> {
   // -- Available QR validity durations (in minutes) --
-  final List<int> _durations = const [5, 10, 15, 30, 45, 60];
+  final List<int> _durations = const [1, 2, 3, 4, 5, 6];
 
   // -- Selected form values (local UI state, not in Riverpod) --
   SubjectModel? _selectedSubject;           // Currently selected subject
@@ -55,7 +55,7 @@ class _LecturerQrScreenState extends ConsumerState<LecturerQrScreen> {
   @override
   void initState() {
     super.initState();
-    _selectedDuration = _durations[2]; // Default: 15 minutes
+    _selectedDuration = _durations[0]; // Default: 15 minutes
   }
 
   @override
