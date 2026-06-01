@@ -61,10 +61,9 @@ class LecturerAttendanceNotifier extends StateNotifier<LecturerAttendanceState> 
         return;
       }
 
-      // 2. Get student profiles for names and IDs
+      // 2. Get student profiles for names
       final users = await userRepo.getUsersByIds(studentIds);
       final userMap = {for (var u in users) u.uid: u.full_name};
-      final universityIdMap = {for (var u in users) u.uid: u.university_id};
 
       // 3. Get attendance records for this subject and session type
       final snapshot = await FirebaseFirestore.instance
@@ -79,7 +78,6 @@ class LecturerAttendanceNotifier extends StateNotifier<LecturerAttendanceState> 
       final studentsList = <LecturerStudentAttendance>[];
       for (final sid in studentIds) {
         final name = userMap[sid] ?? 'Unknown Student';
-        final uniId = universityIdMap[sid] ?? 'Unknown ID';
         
         final Map<int, bool> weekAttendance = {};
         
@@ -97,7 +95,6 @@ class LecturerAttendanceNotifier extends StateNotifier<LecturerAttendanceState> 
 
         studentsList.add(LecturerStudentAttendance(
           studentId: sid,
-          universityId: uniId,
           studentName: name,
           subjectCode: subjectCode,
           weekAttendance: weekAttendance,

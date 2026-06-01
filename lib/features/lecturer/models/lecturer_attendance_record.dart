@@ -13,7 +13,6 @@
 // ============================================================
 class LecturerStudentAttendance {
   final String studentId;
-  final String universityId;
   final String studentName;
   final String subjectCode;
   
@@ -23,7 +22,6 @@ class LecturerStudentAttendance {
 
   const LecturerStudentAttendance({
     required this.studentId,
-    required this.universityId,
     required this.studentName,
     required this.subjectCode,
     this.weekAttendance = const {},
@@ -34,7 +32,6 @@ class LecturerStudentAttendance {
   }) {
     return LecturerStudentAttendance(
       studentId: studentId,
-      universityId: universityId,
       studentName: studentName,
       subjectCode: subjectCode,
       weekAttendance: weekAttendance ?? this.weekAttendance,

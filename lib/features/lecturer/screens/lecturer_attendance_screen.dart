@@ -239,7 +239,7 @@ class _StudentAttendanceCardState extends ConsumerState<_StudentAttendanceCard> 
                           overflow: TextOverflow.ellipsis,
                         ),
                         Text(
-                          widget.student.universityId,
+                          widget.student.studentId,
                           style: AppTypography.caption.copyWith(color: AppColors.textSecondary),
                         ),
                       ],
