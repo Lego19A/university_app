@@ -62,13 +62,7 @@ class DashboardScreen extends ConsumerWidget {
                 // ---- SECTION 2a: Status Alert Card ----
                 // Prominent orange banner showing critical alerts
                 // Remove or hide this widget if there are no alerts
-                StatusAlertCard(
-                  message: 'Your attendance is below 80%. Please take action.',
-                  icon: Icons.warning_amber_rounded,
-                  onTap: () => onNavigate('/attendance'),
-                ),
-
-                const SizedBox(height: AppConstants.spacingLG),
+                
 
                 // ---- SECTION 2b: "Quick Actions" section title ----
                 Text(

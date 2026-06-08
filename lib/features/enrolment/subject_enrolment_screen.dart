@@ -565,6 +565,14 @@ class _SubjectEnrolmentScreenState extends ConsumerState<SubjectEnrolmentScreen>
                 },
               ),
             ],
+            const SizedBox(height: AppConstants.spacingLG),
+            PrimaryButton(
+              label: 'Return to Home Page',
+              onPressed: () {
+                // Return to the first route in the navigator stack (Home)
+                Navigator.of(context).popUntil((route) => route.isFirst);
+              },
+            ),
           ],
         ),
       ),

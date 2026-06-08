@@ -69,7 +69,7 @@ class _LoginPageState extends State<LoginPage> {
 
     // -- Abort if biometrics are not supported on this device --
     if (!canCheck || !supported) {
-      _showMsg("Biometric not supported on this device");
+      _showErrorDialog('Biometrics Not Supported', 'Biometric authentication is not supported on this device.');
       return;
     }
 
@@ -78,7 +78,7 @@ class _LoginPageState extends State<LoginPage> {
     print("Available biometrics: $biometrics");
 
     if (biometrics.isEmpty) {
-      _showMsg("No fingerprint enrolled");
+      _showErrorDialog('No Fingerprint', 'No fingerprint is enrolled on this device.');
       return;
     }
 
@@ -116,14 +116,14 @@ class _LoginPageState extends State<LoginPage> {
       // -- Step 4: Enforce platform restrictions based on role --
       if (kIsWeb && role != 'lecturer') {
         await _auth.signOut();
-        _showMsg("Students must use the mobile app to log in.");
+        _showErrorDialog('Access Denied', 'Students must use the mobile app to log in.');
         setState(() => _isLoading = false);
         return;
       }
 
       if (!kIsWeb && role == 'lecturer') {
         await _auth.signOut();
-        _showMsg("Lecturers must use the web dashboard to log in.");
+        _showErrorDialog('Access Denied', 'Lecturers must use the web dashboard to log in.');
         setState(() => _isLoading = false);
         return;
       }
@@ -151,27 +151,25 @@ class _LoginPageState extends State<LoginPage> {
         );
       }
     } else {
-      _showMsg("Fingerprint authentication failed");
+      _showErrorDialog('Authentication Failed', 'Fingerprint authentication failed.');
     }
 
   } catch (e) {
     print("Fingerprint error: $e");
-    _showMsg("Biometric error");
+    _showErrorDialog('Biometric Error', 'An error occurred during biometric authentication.');
   }
 } 
 }on FirebaseAuthException catch (e) {
     print("Firebase error: ${e.code}");
 
-    if (e.code == 'user-not-found') {
-      _showMsg("No user found");
-    } else if (e.code == 'wrong-password') {
-      _showMsg("Wrong password");
+    if (e.code == 'invalid-credential' || e.code == 'user-not-found' || e.code == 'wrong-password') {
+      _showErrorDialog('Login Failed', 'Invalid email or password.');
     } else {
-      _showMsg("Login error");
+      _showErrorDialog('Login Error', 'An error occurred during login. Please try again.');
     }
   } catch (e) {
     print("General error: $e");
-    _showMsg("Something went wrong");
+    _showErrorDialog('Error', 'Something went wrong.');
   }
 
   // -- Hide loading indicator --
@@ -180,24 +178,56 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   // ============================================================
-  // _showMsg - Displays a SnackBar message at the bottom of screen.
-  // Used for error feedback and status messages.
+  // _showTopSnackBar - Displays a SnackBar message at the top.
   // ============================================================
-  void _showMsg(String msg) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(msg)));
+  void _showTopSnackBar(String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(msg),
+        behavior: SnackBarBehavior.floating,
+        margin: EdgeInsets.only(
+          bottom: MediaQuery.of(context).size.height - 150,
+          left: 20,
+          right: 20,
+        ),
+      ),
+    );
+  }
+
+  // ============================================================
+  // _showErrorDialog - Displays a dialog prompt box for errors.
+  // ============================================================
+  void _showErrorDialog(String title, String message) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Login")),
-      body: Padding(
-        padding: EdgeInsets.all(20),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // -- Email input field --
+      appBar: AppBar(title: const Text("Login")),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 400),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // -- Email input field --
             TextField(
               controller: _emailController,
               decoration: InputDecoration(labelText: "Email"),
@@ -212,12 +242,14 @@ class _LoginPageState extends State<LoginPage> {
             SizedBox(height: 20),
             // -- Login button (or spinner when loading) --
             _isLoading
-                ? CircularProgressIndicator()
+                ? const CircularProgressIndicator()
                 : ElevatedButton(
                     onPressed: _login,
-                    child: Text("Login"),
+                    child: const Text("Login"),
                   )
           ],
+            ),
+          ),
         ),
       ),
     );
